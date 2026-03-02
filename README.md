@@ -80,6 +80,77 @@ Yookassa.payments.capture(payment_id: '12345')
 Yookassa.payments.cancel(payment_id: '12345')
 ```
 
+### Rails webhook endpoint (engine)
+
+The gem ships with a Rails engine and a default webhook controller you can use directly.
+
+1) Configure the webhook token and (optionally) allowed source IPs:
+
+```ruby
+# config/initializers/yookassa.rb
+Yookassa.configure do |config|
+  config.shop_id = ENV.fetch('YOOKASSA_SHOP_ID')
+  config.api_key = ENV.fetch('YOOKASSA_API_KEY')
+
+  # Random, long, secret token used in webhook URL path.
+  config.webhook_token = ENV.fetch('YOOKASSA_WEBHOOK_TOKEN')
+
+  # Optional override. Defaults come from YooKassa docs:
+  # https://yookassa.ru/developers/using-api/webhooks#ip
+  # config.webhook_allowed_ips = ['185.71.76.0/27', ...]
+end
+```
+
+2) Mount the engine in routes:
+
+```ruby
+# config/routes.rb
+Rails.application.routes.draw do
+  mount Yookassa::Engine => '/yookassa'
+end
+```
+
+This exposes:
+
+- `POST /yookassa/webhooks/:token`
+
+Set your YooKassa webhook URL to include the real token value, for example:
+
+- `https://example.com/yookassa/webhooks/<long-random-token>`
+
+The default `Yookassa::WebhooksController` verifies:
+
+- token in URL path
+- request source `request.remote_ip` is in allowlist
+- webhook object matches fresh API fetch by `id` and `status`
+
+No signature headers are used.
+
+### Overriding webhook handling
+
+In host app, inherit from the gem controller and implement business logic in `process_webhook`:
+
+```ruby
+# app/controllers/my_yookassa_webhooks_controller.rb
+class MyYookassaWebhooksController < Yookassa::WebhooksController
+  private
+
+  def process_webhook(payload)
+    object = payload['object'] || payload.dig('data', 'object')
+    return unless object
+
+    # Your app-specific processing
+  end
+end
+```
+
+Then route to your controller (keeping token in path):
+
+```ruby
+# config/routes.rb
+post '/webhooks/yookassa/:token', to: 'my_yookassa_webhooks#create'
+```
+
 ### Path to 1.0
 
 **Настройки SDK API ЮKassa**

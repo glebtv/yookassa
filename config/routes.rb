@@ -1,0 +1,3 @@
+Yookassa::Engine.routes.draw do
+  post "/webhooks/:token", to: "webhooks#create"
+end
