@@ -17,7 +17,7 @@ if defined?(Rails)
   require File.expand_path("../../app/controllers/yookassa/webhooks_controller", __dir__)
 
   class YookassaSpecBrowserController < ActionController::Base
-    def index
+    def index # rubocop:disable Metrics/MethodLength
       render inline: <<~HTML
         <!DOCTYPE html>
         <html>

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "./types"
-require_relative "./payment"
-require_relative "./receipt"
-require_relative "./refund"
-require_relative "./webhook"
-require_relative "./deal"
+require_relative "types"
+require_relative "payment"
+require_relative "receipt"
+require_relative "refund"
+require_relative "webhook"
+require_relative "deal"
 
 module Yookassa
   module Entity

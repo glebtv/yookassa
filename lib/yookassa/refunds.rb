@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "./client"
-require_relative "./entity/refund"
-require_relative "./entity/collection"
+require_relative "client"
+require_relative "entity/refund"
+require_relative "entity/collection"
 
 module Yookassa
   class Refunds < Client
@@ -13,7 +13,7 @@ module Yookassa
 
     def create(payload:, idempotency_key: SecureRandom.hex(10))
       data = post("refunds", payload: payload, idempotency_key: idempotency_key)
-      Entity::Refund.new(**data.merge(idempotency_key: idempotency_key))
+      Entity::Refund.new(**data, idempotency_key: idempotency_key)
     end
 
     def list(filters: {})

@@ -54,7 +54,7 @@ module Yookassa
     end
 
     def payload_matches_api_object?(payload)
-      object = payload["object"] || payload.dig("data", "object")
+      object = extract_object(payload)
       return false unless object.is_a?(Hash)
 
       object_id = object["id"].to_s
@@ -67,6 +67,10 @@ module Yookassa
       fetched_object.id == object_id && fetched_object.status == object_status
     rescue StandardError
       false
+    end
+
+    def extract_object(payload)
+      payload["object"] || payload.dig("data", "object")
     end
 
     def fetch_object_from_api(payload, object_id)

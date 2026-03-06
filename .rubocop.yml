@@ -17,4 +17,4 @@ Layout/LineLength:
   Max: 150
 
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context', 'shared_examples']
+  AllowedMethods: ['describe', 'context', 'shared_examples']

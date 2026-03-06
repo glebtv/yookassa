@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "./client"
-require_relative "./entity/payment"
-require_relative "./entity/collection"
+require_relative "client"
+require_relative "entity/payment"
+require_relative "entity/collection"
 
 module Yookassa
   class Payments < Client
@@ -13,17 +13,17 @@ module Yookassa
 
     def create(payment:, idempotency_key: SecureRandom.hex(10))
       data = post("payments", payload: payment, idempotency_key: idempotency_key)
-      Entity::Payment.new(**data.merge(idempotency_key: idempotency_key))
+      Entity::Payment.new(**data, idempotency_key: idempotency_key)
     end
 
     def capture(payment_id:, idempotency_key: SecureRandom.hex(10))
       data = post("payments/#{payment_id}/capture", idempotency_key: idempotency_key)
-      Entity::Payment.new(**data.merge(idempotency_key: idempotency_key))
+      Entity::Payment.new(**data, idempotency_key: idempotency_key)
     end
 
     def cancel(payment_id:, idempotency_key: SecureRandom.hex(10))
       data = post("payments/#{payment_id}/cancel", idempotency_key: idempotency_key)
-      Entity::Payment.new(**data.merge(idempotency_key: idempotency_key))
+      Entity::Payment.new(**data, idempotency_key: idempotency_key)
     end
 
     def list(filters: {})

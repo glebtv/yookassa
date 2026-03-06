@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative "./types"
-require_relative "./amount"
-require_relative "./payment_methods"
-require_relative "./confirmation"
-require_relative "./recipient"
-require_relative "./cancellation_details"
-require_relative "./authorization_details"
-require_relative "./transfer"
+require_relative "types"
+require_relative "amount"
+require_relative "payment_methods"
+require_relative "confirmation"
+require_relative "recipient"
+require_relative "cancellation_details"
+require_relative "authorization_details"
+require_relative "transfer"
 
 module Yookassa
   module Entity
