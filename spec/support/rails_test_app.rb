@@ -78,7 +78,35 @@ if defined?(Rails)
   Capybara.server = :webrick
   Capybara.default_max_wait_time = 5
   Capybara.register_driver(:cuprite) do |app|
-    Capybara::Cuprite::Driver.new(app, headless: true)
+    browser_options = {
+      "no-sandbox" => nil,
+      "disable-dev-shm-usage" => nil,
+      "disable-gpu" => nil,
+      "disable-software-rasterizer" => nil,
+      "disable-setuid-sandbox" => nil
+    }
+
+    if ENV["CI"]
+      browser_options.merge!(
+        "disable-background-timer-throttling" => nil,
+        "disable-backgrounding-occluded-windows" => nil,
+        "disable-renderer-backgrounding" => nil,
+        "disable-ipc-flooding-protection" => nil
+      )
+    end
+
+    options = {
+      window_size: [1280, 1024],
+      browser_options: browser_options,
+      timeout: ENV.fetch("FERRUM_TIMEOUT", 30).to_i,
+      headless: true,
+      process_timeout: ENV.fetch("FERRUM_PROCESS_TIMEOUT", ENV["CI"] ? 120 : 30).to_i
+    }
+
+    chrome_path = ENV.fetch("CHROME_PATH", nil)
+    options[:browser_path] = chrome_path if chrome_path
+
+    Capybara::Cuprite::Driver.new(app, **options)
   end
 
   RSpec.configure do |config|
