@@ -24,21 +24,42 @@ module Yookassa
     end
 
     def authentic_webhook?(payload)
-      token_valid? && source_ip_allowed? && payload_matches_api_object?(payload)
+      token_ok = token_valid?
+      ip_ok = source_ip_allowed?
+      api_ok = payload_matches_api_object?(payload)
+
+      unless token_ok && ip_ok && api_ok
+        Rails.logger.info("[Yookassa Webhook] Auth failed: token=#{token_ok}, ip=#{ip_ok}, api=#{api_ok}, remote_ip=#{request.remote_ip}")
+      end
+
+      token_ok && ip_ok && api_ok
     end
 
     def token_valid?
       token = params[:token].to_s
       configured_token = Yookassa.config.webhook_token.to_s
-      return false if token.empty? || configured_token.empty?
+      if token.empty? || configured_token.empty?
+        Rails.logger.info("[Yookassa Webhook] Token validation failed: param_token=#{token.empty? ? "empty" : "present"}, configured_token=#{configured_token.empty? ? "empty" : "present"}")
+        return false
+      end
 
-      ActiveSupport::SecurityUtils.secure_compare(token, configured_token)
+      if token.bytesize != configured_token.bytesize
+        Rails.logger.info("[Yookassa Webhook] Token comparison: false (length mismatch)")
+        return false
+      end
+
+      result = ActiveSupport::SecurityUtils.secure_compare(token, configured_token)
+      Rails.logger.info("[Yookassa Webhook] Token comparison: #{result}")
+      result
     end
 
     def source_ip_allowed?
       source_ip = request.remote_ip
-      allowed_cidrs.any? { |cidr| IPAddr.new(cidr).include?(source_ip) }
-    rescue IPAddr::InvalidAddressError
+      allowed = allowed_cidrs.any? { |cidr| IPAddr.new(cidr).include?(source_ip) }
+      Rails.logger.info("[Yookassa Webhook] IP check: remote_ip=#{source_ip}, allowed=#{allowed}, cidrs=#{allowed_cidrs}")
+      allowed
+    rescue IPAddr::InvalidAddressError => e
+      Rails.logger.info("[Yookassa Webhook] IP check failed: #{e.message}")
       false
     end
 
@@ -55,17 +76,29 @@ module Yookassa
 
     def payload_matches_api_object?(payload)
       object = extract_object(payload)
-      return false unless object.is_a?(Hash)
+      unless object.is_a?(Hash)
+        Rails.logger.info("[Yookassa Webhook] API object check failed: object is not a Hash")
+        return false
+      end
 
       object_id = object["id"].to_s
       object_status = object["status"].to_s
-      return false if object_id.empty? || object_status.empty?
+      if object_id.empty? || object_status.empty?
+        Rails.logger.info("[Yookassa Webhook] API object check failed: object_id=#{object_id}, object_status=#{object_status}")
+        return false
+      end
 
       fetched_object = fetch_object_from_api(payload, object_id)
-      return false if fetched_object.nil?
+      if fetched_object.nil?
+        Rails.logger.info("[Yookassa Webhook] API object check failed: could not fetch object #{object_id}")
+        return false
+      end
 
-      fetched_object.id == object_id && fetched_object.status == object_status
-    rescue StandardError
+      result = fetched_object.id == object_id && fetched_object.status == object_status
+      Rails.logger.info("[Yookassa Webhook] API object check: fetched_id=#{fetched_object.id}, fetched_status=#{fetched_object.status}, matches=#{result}")
+      result
+    rescue StandardError => e
+      Rails.logger.info("[Yookassa Webhook] API object check failed: #{e.message}")
       false
     end
 

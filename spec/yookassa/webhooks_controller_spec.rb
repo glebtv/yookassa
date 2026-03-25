@@ -36,6 +36,11 @@ RSpec.describe Yookassa::WebhooksController do
     end
 
     it "rejects webhook when token is invalid" do
+      payments_client = instance_double(Yookassa::Payments)
+      allow(Yookassa).to receive(:payments).and_return(payments_client)
+      allow(payments_client).to receive(:find).with(payment_id: "payment-1")
+                                              .and_return(instance_double(Yookassa::Entity::Payment, id: "payment-1", status: "succeeded"))
+
       post "/yookassa/webhooks/wrong-token", payload, headers
 
       expect(last_response.status).to eq(401)
@@ -61,6 +66,21 @@ RSpec.describe Yookassa::WebhooksController do
       post "/yookassa/webhooks/secret-token", payload, headers
 
       expect(last_response.status).to eq(401)
+    end
+  end
+
+  describe "logging", :rails do
+    it "logs auth result when webhook authentication fails" do
+      controller = described_class.new
+
+      allow(controller).to receive(:token_valid?).and_return(true)
+      allow(controller).to receive(:source_ip_allowed?).and_return(false)
+      allow(controller).to receive(:payload_matches_api_object?).and_return(true)
+      allow(controller).to receive(:request).and_return(instance_double(ActionDispatch::Request, remote_ip: "192.168.0.10"))
+
+      expect(Rails.logger).to receive(:info).with(include("Auth failed: token=true, ip=false, api=true"))
+
+      expect(controller.send(:authentic_webhook?, {})).to eq(false)
     end
   end
 
