@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "dry-struct"
   spec.add_runtime_dependency "dry-validation"
-  spec.add_runtime_dependency "httpclient", ">= 2.9"
+  spec.add_runtime_dependency "rs-httpclient", "= 3.0.0.beta1"
 end

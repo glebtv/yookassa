@@ -5,7 +5,7 @@ source "https://rubygems.org"
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 # Specify your gem's dependencies in yookassa.gemspec
-gem "httpclient", github: "glebtv/httpclient", branch: "master"
+gem "rs-httpclient", "= 3.0.0.beta1"
 
 gemspec
 

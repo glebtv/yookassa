@@ -1,18 +1,10 @@
-GIT
-  remote: https://github.com/glebtv/httpclient
-  revision: 28d3d1d4fb428e98cc52f04294fe21717db9b28f
-  branch: master
-  specs:
-    httpclient (2.9.0)
-      mutex_m
-
 PATH
   remote: .
   specs:
     yookassa (0.2.0)
       dry-struct
       dry-validation
-      httpclient (>= 2.9)
+      rs-httpclient (= 3.0.0.beta1)
 
 GEM
   remote: https://rubygems.org/
@@ -100,6 +92,8 @@ GEM
     reline (0.6.3)
       io-console (~> 0.5)
     rexml (3.4.4)
+    rs-httpclient (3.0.0.beta1)
+      mutex_m
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -164,11 +158,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  httpclient!
   pry (~> 0.16)
   pry-byebug (~> 3.8)
   rack (~> 3.2)
   rake (~> 13.4)
+  rs-httpclient (= 3.0.0.beta1)
   rspec (~> 3.13)
   rubocop (~> 1.88)
   rubocop-rake (~> 0.6.0)

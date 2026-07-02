@@ -127,7 +127,7 @@ Everyone is encouraged to help improve this project. Here are a few ways you can
 
 ## Development
 
-This gem uses the `glebtv/httpclient` fork for local development to avoid the `http` gem's `llhttp-ffi` dependency chain.
+This gem uses `rs-httpclient` to avoid the `http` gem's `llhttp-ffi` dependency chain.
 
 ```sh
 bin/setup
