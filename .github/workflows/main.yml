@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
 
   pull_request:
 
@@ -14,8 +12,8 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - "3.3"
           - "3.4"
+          - "4.0"
 
     steps:
     - uses: actions/checkout@v4
@@ -27,4 +25,22 @@ jobs:
     - name: Rubocop
       run: bundle exec rubocop
     - name: Rspec
-      run: bundle exec rspec
+      run: bundle exec rspec --tag ~browser
+
+  browser-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 4.0
+        bundler-cache: true
+    - name: Set up Chrome
+      uses: browser-actions/setup-chrome@v1
+      id: setup-chrome
+    - name: Browser specs (Cuprite)
+      run: bundle exec rspec --tag browser
+      env:
+        CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}

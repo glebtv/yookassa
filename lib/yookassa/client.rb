@@ -2,7 +2,7 @@
 
 require "httpclient"
 require "json"
-require_relative "./entity/error"
+require_relative "entity/error"
 
 module Yookassa
   class Client
@@ -38,8 +38,9 @@ module Yookassa
       api_call { http.post("#{API_URL}#{endpoint}", body: JSON.generate(payload), header: headers) }
     end
 
-    def delete(endpoint, idempotency_key:)
-      api_call { http.delete("#{API_URL}#{endpoint}", header: { "Idempotence-Key" => idempotency_key }) }
+    def delete(endpoint, idempotency_key: nil)
+      headers = idempotency_key ? { "Idempotence-Key" => idempotency_key } : {}
+      api_call { http.delete("#{API_URL}#{endpoint}", header: headers) }
     end
 
     def api_call

@@ -16,13 +16,18 @@ group :documentation do
 end
 
 group :development, :test do
+  gem "capybara", "~> 3.40"
+  gem "cuprite", "~> 0.15"
   gem "pry", "~> 0.16"
-  gem "pry-byebug", "~> 3.8"
+  gem "pry-byebug", "~> 3.10"
+  gem "rack-test", "~> 2.1"
+  gem "rails", "~> 8.0"
   gem "rake", "~> 13.4"
   gem "rspec", "~> 3.13"
   gem "rubocop", "~> 1.88"
-  gem "rubocop-rake", "~> 0.6.0"
+  gem "rubocop-rake", "~> 0.7"
   gem "rubocop-rspec", "~> 2.31"
   gem "simplecov", "~> 0.22"
+  gem "sqlite3", "~> 2.0"
   gem "webmock", "~> 3.26"
 end

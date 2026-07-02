@@ -20,6 +20,12 @@ Layout/LineLength:
 Metrics/BlockLength:
   AllowedMethods: ["describe", "context", "shared_examples"]
 
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/ClassLength:
+  Max: 120
+
 Metrics/MethodLength:
   Max: 15
 

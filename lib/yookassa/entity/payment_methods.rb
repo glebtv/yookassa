@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "./types"
-require_relative "./card"
+require_relative "types"
+require_relative "card"
 
 module Yookassa
   module Entity

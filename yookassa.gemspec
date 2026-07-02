@@ -15,14 +15,14 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files            = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
-  spec.test_files       = spec.files.grep(/^spec/)
   spec.extra_rdoc_files = Dir["README.md", "LICENSE", "CHANGELOG.md"]
 
   spec.require_paths = ["lib"]
 
   spec.required_ruby_version = ">= 3.3"
 
-  spec.add_runtime_dependency "dry-struct"
-  spec.add_runtime_dependency "dry-validation"
-  spec.add_runtime_dependency "rs-httpclient", "= 3.0.0.beta1"
+  spec.add_dependency "dry-struct"
+  spec.add_dependency "dry-validation"
+  spec.add_dependency "rs-httpclient", "= 3.0.0.beta1"
+  spec.metadata["rubygems_mfa_required"] = "true"
 end
