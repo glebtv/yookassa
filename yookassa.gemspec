@@ -20,9 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.6"
+  spec.required_ruby_version = ">= 3.3"
 
   spec.add_runtime_dependency "dry-struct"
   spec.add_runtime_dependency "dry-validation"
-  spec.add_runtime_dependency "http", "~> 5.0"
+  spec.add_runtime_dependency "httpclient", ">= 2.9"
 end

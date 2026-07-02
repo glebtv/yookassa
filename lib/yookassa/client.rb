@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "http"
+require "httpclient"
+require "json"
 require_relative "./entity/error"
 
 module Yookassa
@@ -10,12 +11,15 @@ module Yookassa
     attr_reader :http
 
     def initialize(shop_id: Yookassa.config.shop_id, api_key: Yookassa.config.api_key, oauth_token: nil)
-      @http = HTTP.headers(accept: "application/json")
+      @http = HTTPClient.new(
+        default_header: { "Accept" => "application/json" },
+        force_basic_auth: true
+      )
 
       if shop_id && api_key
-        @http.basic_auth(user: shop_id, pass: api_key)
+        @http.set_auth(API_URL, shop_id, api_key)
       elsif oauth_token
-        @http.headers("Authorization" => "Bearer #{oauth_token}")
+        @http.default_header["Authorization"] = "Bearer #{oauth_token}"
       else
         message = "Specify `shop_id` and `api_key` settings in a `.configure` block " \
                   "or pass `oauth_token` to a client"
@@ -26,23 +30,28 @@ module Yookassa
     private
 
     def get(endpoint, query: {})
-      api_call { http.get("#{API_URL}#{endpoint}", params: query) }
+      api_call { http.get("#{API_URL}#{endpoint}", query: query) }
     end
 
     def post(endpoint, idempotency_key:, payload: {})
-      api_call { http.headers("Idempotence-Key" => idempotency_key).post("#{API_URL}#{endpoint}", json: payload) }
+      headers = json_headers.merge("Idempotence-Key" => idempotency_key)
+      api_call { http.post("#{API_URL}#{endpoint}", body: JSON.generate(payload), header: headers) }
     end
 
     def delete(endpoint, idempotency_key:)
-      api_call { http.headers("Idempotence-Key" => idempotency_key).delete("#{API_URL}#{endpoint}") }
+      api_call { http.delete("#{API_URL}#{endpoint}", header: { "Idempotence-Key" => idempotency_key }) }
     end
 
     def api_call
       response = yield if block_given?
       body = JSON.parse(response.body.to_s, symbolize_names: true)
-      return body if response.status.success?
+      return body if response.status.between?(200, 299)
 
       Entity::Error.new(**body)
+    end
+
+    def json_headers
+      { "Content-Type" => "application/json" }
     end
   end
 end

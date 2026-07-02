@@ -1,6 +1,7 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.3
   NewCops: enable
+  SuggestExtensions: false
 
 Style/StringLiterals:
   Enabled: true
@@ -17,4 +18,25 @@ Layout/LineLength:
   Max: 150
 
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context', 'shared_examples']
+  AllowedMethods: ["describe", "context", "shared_examples"]
+
+Metrics/MethodLength:
+  Max: 15
+
+Naming/PredicateMethod:
+  Enabled: false
+
+Style/KeywordArgumentsMerging:
+  Enabled: false
+
+Style/RedundantCurrentDirectoryInPath:
+  Enabled: false
+
+Gemspec/AddRuntimeDependency:
+  Enabled: false
+
+Gemspec/DeprecatedAttributeAssignment:
+  Enabled: false
+
+Gemspec/RequireMFA:
+  Enabled: false

@@ -125,6 +125,16 @@ Everyone is encouraged to help improve this project. Here are a few ways you can
 - Write, clarify, or fix documentation
 - Suggest or add new features
 
+## Development
+
+This gem uses the `glebtv/httpclient` fork for local development to avoid the `http` gem's `llhttp-ffi` dependency chain.
+
+```sh
+bin/setup
+bundle exec rspec
+bundle exec rubocop
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
