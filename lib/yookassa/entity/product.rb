@@ -62,7 +62,7 @@ module Yookassa
 
       # Amount of excise tax on products including kopeks. Decimal number with 2 digits after the period.
       # Online sales register that support this parameter: Orange Data, Kit Invest.
-      attribute? :excise
+      attribute? :excise, Types::Coercible::Float
 
       # Information about the supplier of product or service. You can specify this parameter if you send the data
       # for creating the receipt using the Receipt after payment scenario.
